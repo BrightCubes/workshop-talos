@@ -135,12 +135,12 @@ tasks:
     desc: "Upgrade your Talos version to 1.10.1"
     aliases: [08]
     env:
-      TALOS_VERSION: 1.7.6
+      TALOS_VERSION: 1.10.1
     cmds:
       - clear
       - gum log --level=info "Changing Talos version to $TALOS_VERSION"
-      - gum log --level=info --prefix="Run command" "sed -i 's/1.10.1/"$TALOS_VERSION"/g' compose.yaml"
-      - sed -i 's/1.10.1/'"$TALOS_VERSION"'/g' compose.yaml
+      - gum log --level=info --prefix="Run command" "sed -i 's/1.9.5/"$TALOS_VERSION"/g' compose.yaml"
+      - sed -i 's/1.9.5/'"$TALOS_VERSION"'/g' compose.yaml
       - gum log --level=info --prefix="Run command" "docker compose up -d talos-cp"
       - |
         gum spin --show-error --title="Upgrading Controlplane..." -- \
@@ -154,7 +154,7 @@ tasks:
 
   upgrade-k8s:
     silent: true
-    desc: "Upgrade Kubernetes to version '1.31.8, 1.32.2, 1.32.4 or 1.33.0'"
+    desc: "Upgrade Kubernetes to version '1.31.8, 1.32.2, 1.32.3 or 1.32.4'"
     aliases: [09]
     env:
       TALOSCONFIG: ./talosconfig
@@ -162,7 +162,7 @@ tasks:
       - clear
       - echo "To which Kubernetes version do you want to upgrade?"
       - |
-        K8S_VERSION=$(gum choose "1.31.8" "1.32.2" "1.32.4" "1.33.0") && \
+        K8S_VERSION=$(gum choose "1.31.8" "1.32.2" "1.32.3" "1.32.4") && \
         gum log --level=info --prefix="Run command" "talosctl upgrade-k8s --to=$K8S_VERSION" && \
         gum log --level=info "Started Kubernetes upgrade $K8S_VERSION" && \
         talosctl upgrade-k8s --to=$K8S_VERSION

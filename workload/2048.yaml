@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: "2048-deployment"
+  name: "game-2048"
 spec:
   selector:
     matchLabels:
@@ -19,6 +19,11 @@ spec:
           ports:
             - containerPort: 80
               protocol: TCP
+          securityContext:
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+            
 ---
 apiVersion: v1
 kind: Service
