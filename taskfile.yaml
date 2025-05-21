@@ -56,39 +56,17 @@ tasks:
       IP_CP:
         sh: docker inspect talos-cp | jq -r '.[].NetworkSettings.Networks."talos-workshop_talos-workshop".IPAddress'
 
-  docker-patch:
-    silent: true
-    desc: "Creates a patch file for Talos to run in Docker"
-    aliases: [04]
-    cmds:
-      - clear
-      - |
-        gum log --level=info --prefix="Run command" \
-        "
-        echo 'machine:
-          features:
-            hostDNS:
-              forwardKubeDNSToHost: true' > patch-docker.yaml
-        "
-      - |
-        gum spin --show-error --title="Creating Talos patch for Docker..." -- \
-        echo "machine:
-          features:
-            hostDNS:
-              forwardKubeDNSToHost: true" > patch-docker.yaml
-      - gum log --level=info "Talos config patch for Docker created"
-
   apply-config:
     silent: true
     desc: "Applies the Talos config to both containers 'talos-cp, talos-worker' based on there IP Address"
-    aliases: [05]
+    aliases: [04]
     cmds:
       - clear
-      - gum log --level=info --prefix="Run command" "talosctl apply-config -f controlplane.yaml -n {{.IP_CP}} -p @patch-docker.yaml --insecure"
-      - gum spin --show-error --title="Applying Talos Controlplane config..." -- sleep 5 && talosctl apply-config -f controlplane.yaml -n {{.IP_CP}} -p @patch-docker.yaml --insecure
+      - gum log --level=info --prefix="Run command" "talosctl apply-config -f controlplane.yaml -n {{.IP_CP}} --insecure"
+      - gum spin --show-error --title="Applying Talos Controlplane config..." -- sleep 5 && talosctl apply-config -f controlplane.yaml -n {{.IP_CP}} --insecure
       - gum log --level=info "Talos Controlplane config applied on {{.IP_CP}}"
-      - gum log --level=info --prefix="Run command" "talosctl apply-config -f worker.yaml -n {{.IP_WRK}} -p @patch-docker.yaml --insecure"
-      - gum spin --show-error --title="Applying Talos Worker config..." -- talosctl apply-config -f worker.yaml -n {{.IP_WRK}} -p @patch-docker.yaml --insecure
+      - gum log --level=info --prefix="Run command" "talosctl apply-config -f worker.yaml -n {{.IP_WRK}} --insecure"
+      - gum spin --show-error --title="Applying Talos Worker config..." -- talosctl apply-config -f worker.yaml -n {{.IP_WRK}} --insecure
       - gum log --level=info "Talos Worker config applied on {{.IP_WRK}}"
     vars:
       IP_CP:
@@ -99,7 +77,7 @@ tasks:
   bootstrap:
     silent: true
     desc: "Bootstrap your Talos cluster"
-    aliases: [06]
+    aliases: [05]
     env:
       TALOSCONFIG: ./talosconfig
     cmds:
@@ -114,7 +92,7 @@ tasks:
   kubeconfig:
     silent: true
     desc: "Get kubeconfig file from your Talos cluster"
-    aliases: [07]
+    aliases: [06]
     env:
       TALOSCONFIG: ./talosconfig
     cmds:
@@ -124,7 +102,7 @@ tasks:
       - gum log --level=info "Kubeconfig downloaded for Talos cluster"
       - gum log --level=info --prefix="Run command" "kubectl get nodes"
       - kubectl get nodes
-      - echo 
+      - echo
       - gum log --level=info --prefix="Run command" "kubectl get pods --namespace kube-system -o wide"
       - kubectl get pods --namespace kube-system -o wide
 
@@ -133,7 +111,7 @@ tasks:
   upgrade-talos:
     silent: true
     desc: "Upgrade your Talos version to 1.10.1"
-    aliases: [08]
+    aliases: [07]
     env:
       TALOS_VERSION: 1.10.1
     cmds:
@@ -155,7 +133,7 @@ tasks:
   upgrade-k8s:
     silent: true
     desc: "Upgrade Kubernetes to version '1.31.8, 1.32.2, 1.32.3 or 1.32.4'"
-    aliases: [09]
+    aliases: [08]
     env:
       TALOSCONFIG: ./talosconfig
     cmds:
@@ -170,7 +148,7 @@ tasks:
   workload:
     silent: true
     desc: "Run workload"
-    aliases: [10]
+    aliases: [09]
     env:
       TALOSCONFIG: ./talosconfig
     cmds:
