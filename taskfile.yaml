@@ -157,6 +157,58 @@ tasks:
       - gum log --level=info "Applying Workshop manifest"
       - kubectl apply -f ./workload
 
+  podsecurity-patch:
+    silent: true
+    desc: "Creates a patch file to run the workload"
+    aliases: [10]
+    cmds:
+      - clear
+      - |
+        gum log --level=info --prefix="Run command" \
+        "
+        echo 'cluster:
+          apiServer:
+            admissionControl:
+              - name: PodSecurity
+                configuration:
+                  exemptions:
+                    namespaces:
+                      - game-2048' > patch.yaml
+        "
+      - |
+        gum spin --show-error --title="Creating Talos patch for Docker..." -- \
+        echo "cluster:
+          apiServer:
+            admissionControl:
+              - name: PodSecurity
+                configuration:
+                  exemptions:
+                    namespaces:
+                      - game-2048" > patch.yaml
+      - gum log --level=info "Talos config patch for workload created"
+
+  apply-patch:
+    silent: true
+    desc: "Applies the patch.yaml"
+    aliases: [11]
+    env:
+      TALOSCONFIG: ./talosconfig
+    cmds:
+      - clear
+      - gum log --level=info --prefix="Run command" "talosctl patch machineconfig -p @patch.yaml"
+      - gum spin --show-error --title="Applying Talos Workload patch..." -- sleep 5 && talosctl patch machineconfig -p @patch.yaml
+      - gum log --level=info "Talos Controlplane patch applied"
+
+  restart-workload:
+    silent: true
+    desc: "Restart Workload"
+    aliases: [12]
+    cmds:
+      - clear
+      - gum log --level=info --prefix="Run command" "kubectl rollout -n game-2048 restart deployments/game-2048"
+      - gum spin --show-error --title="Restarting Workload" -- kubectl rollout -n game-2048 restart deployments/game-2048
+      - gum log --level=info "Workload restared"
+
   ##################################
 
   one-click-setup:
@@ -170,7 +222,6 @@ tasks:
       - task: start-talos
       - task: gen-config
       - task: update-talosconfig
-      - task: docker-patch
       - task: apply-config
       - task: bootstrap
       - task: kubeconfig
@@ -194,5 +245,5 @@ tasks:
       - gum log --level=info "Docker volumes deleted"
       - gum spin --show-error --title="Restoring original compose.yaml..." -- git restore compose.yaml
       - gum log --level=info "compose.yaml restored"
-      - gum spin --show-error --title="Deleting Talos config..." -- rm -rf talosconfig controlplane.yaml worker.yaml patch-docker.yaml
+      - gum spin --show-error --title="Deleting Talos config..." -- rm -rf talosconfig controlplane.yaml worker.yaml patch.yaml
       - gum log --level=info "Talos configuration deleted"
