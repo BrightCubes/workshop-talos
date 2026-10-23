@@ -78,7 +78,7 @@ talosctl dashboard
 talosctl bootstrap
 talosctl health
 ```
-`bootstrap` starts etcd on the control plane, once per cluster.
+`bootstrap` starts etcd on the control plane, once per cluster. `health` keeps retrying until every check is `OK`, so errors like `connection refused` along the way are normal while the cluster starts.
 
 ## 7. Get the kubeconfig
 
@@ -139,9 +139,16 @@ cluster:
             namespaces:
               - game-2048
 ```
-Apply it to the control plane, then restart the workload:
+Apply it to the control plane:
 ```
 talosctl patch machineconfig -p @patch.yaml
+```
+The kube-apiserver restarts to load the new setting, so kubectl answers `Unable to connect to the server` for about 20 seconds. Wait until this works again:
+```
+kubectl get nodes
+```
+Then restart the workload:
+```
 kubectl rollout restart deployment/game-2048 -n game-2048
 kubectl get pods -n game-2048 -o wide
 ```
