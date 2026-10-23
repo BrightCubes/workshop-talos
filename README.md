@@ -44,7 +44,15 @@ The workshop runs inside WSL (Ubuntu), not in PowerShell.
    brew install siderolabs/tap/talosctl kubectl k9s
    ```
    Already installed? Update them with `brew upgrade siderolabs/tap/talosctl kubectl k9s`.
-5. Clone this repository inside Ubuntu (e.g. in `~`), not on the Windows drive (`/mnt/c`).
+
+### Get the repository
+
+Clone this repository and go into it:
+```
+git clone https://github.com/BrightCubes/workshop-talos.git
+cd workshop-talos
+```
+On Windows, run this inside Ubuntu, in your home directory (`cd ~`), not on the Windows drive (`/mnt/c`).
 
 ### Check your setup
 
