@@ -8,13 +8,60 @@ Both nodes run as Docker containers (`compose.yaml`): a control plane (`talos-cp
 
 ## Prerequisites
 
-- **Docker Desktop, up to date.** Talos 1.14 needs a host kernel of 6.15 or newer when it runs in a container. Check it with:
-  ```
-  docker info --format '{{.KernelVersion}}'
-  ```
-  With an older kernel (e.g. Docker Desktop 29.7, kernel 6.12) the node never starts and its log shows `failed to set up /etc overlay ... key="lowerdir+"` ([siderolabs/talos#14476](https://github.com/siderolabs/talos/issues/14476)).
-- **talosctl 1.14 or newer**: `brew install siderolabs/tap/talosctl`, or see the [Talos docs](https://docs.siderolabs.com/talos/latest/getting-started/talosctl)
+You need:
+- **Docker Desktop, up to date.** Talos 1.14 needs a host kernel of 6.15 or newer when it runs in a container.
+- **talosctl 1.14 or newer**
 - **kubectl**
+- **k9s** (optional): a terminal dashboard for Kubernetes, handy to watch pods and nodes during the upgrades
+
+### macOS
+
+Install [Docker Desktop](https://www.docker.com/products/docker-desktop/), or update it if you already have it. Then install the tools with [Homebrew](https://brew.sh):
+```
+brew install siderolabs/tap/talosctl kubectl k9s
+```
+Already installed? Update them with `brew upgrade siderolabs/tap/talosctl kubectl k9s`.
+
+### Windows (WSL)
+
+The workshop runs inside WSL (Ubuntu), not in PowerShell.
+
+1. In PowerShell, install or update WSL:
+   ```
+   wsl --install
+   wsl --update
+   ```
+2. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/), or update it. In Docker Desktop, go to **Settings → Resources → WSL integration** and enable it for Ubuntu.
+3. Open Ubuntu and install the tools:
+   ```
+   # talosctl
+   curl -sL https://talos.dev/install | sh
+
+   # kubectl
+   curl -LO "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+   sudo install kubectl /usr/local/bin/kubectl && rm kubectl
+
+   # k9s (optional)
+   curl -sL https://github.com/derailed/k9s/releases/latest/download/k9s_Linux_amd64.tar.gz | sudo tar -xz -C /usr/local/bin k9s
+   ```
+4. Clone this repository inside Ubuntu (e.g. in `~`), not on the Windows drive (`/mnt/c`).
+
+### Check your setup
+
+Run this before the workshop:
+```
+docker info --format '{{.KernelVersion}}'
+talosctl version --client --short
+kubectl version --client
+```
+The kernel must be 6.15 or newer and talosctl 1.14 or newer. With an older kernel the Talos nodes never start, and their log shows `failed to set up /etc overlay ... key="lowerdir+"` ([siderolabs/talos#14476](https://github.com/siderolabs/talos/issues/14476)). Update Docker Desktop (and on Windows also run `wsl --update`).
+
+To save time and wifi on the day, download the images in advance:
+```
+docker compose pull
+TALOS_VERSION=v1.14.4 docker compose pull
+docker pull amigoscode/2048@sha256:45a893ee62267d2825ffefb3b98e860de9716a5bb80091a84967d2bd427990db
+```
 
 All commands below are run from the root of this repository.
 
@@ -104,6 +151,8 @@ kubectl get nodes -o wide -w
 docker compose up -d talos-worker
 kubectl get nodes -o wide -w
 ```
+Tip: open a second terminal, run the two `export` lines from step 1 and start `k9s`. You can then watch nodes and pods change during this upgrade and the next one (type `:nodes` or `:pods` to switch views).
+
 In Docker an upgrade means starting the node from a new image. On real hardware you'd use `talosctl upgrade --image ...`.
 
 ## 9. Upgrade Kubernetes
