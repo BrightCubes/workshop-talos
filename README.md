@@ -32,19 +32,19 @@ The workshop runs inside WSL (Ubuntu), not in PowerShell.
    wsl --update
    ```
 2. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/), or update it. In Docker Desktop, go to **Settings → Resources → WSL integration** and enable it for Ubuntu.
-3. Open Ubuntu and install the tools:
+3. Open Ubuntu and install [Homebrew](https://brew.sh):
    ```
-   # talosctl
-   curl -sL https://talos.dev/install | sh
-
-   # kubectl
-   curl -LO "https://dl.k8s.io/release/$(curl -Ls https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-   sudo install kubectl /usr/local/bin/kubectl && rm kubectl
-
-   # k9s (optional)
-   curl -sL https://github.com/derailed/k9s/releases/latest/download/k9s_Linux_amd64.tar.gz | sudo tar -xz -C /usr/local/bin k9s
+   sudo apt-get update && sudo apt-get install -y build-essential curl git
+   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+   echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> ~/.bashrc
+   eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
    ```
-4. Clone this repository inside Ubuntu (e.g. in `~`), not on the Windows drive (`/mnt/c`).
+4. Install the tools, the same way as on macOS:
+   ```
+   brew install siderolabs/tap/talosctl kubectl k9s
+   ```
+   Already installed? Update them with `brew upgrade siderolabs/tap/talosctl kubectl k9s`.
+5. Clone this repository inside Ubuntu (e.g. in `~`), not on the Windows drive (`/mnt/c`).
 
 ### Check your setup
 
