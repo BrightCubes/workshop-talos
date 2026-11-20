@@ -19,8 +19,9 @@ spec:
         app: "2048"
     spec:
       containers:
-        - image: agrawpri/2048-docker
-          imagePullPolicy: Always
+        # Multi-arch (amd64 + arm64), pinned to a digest
+        - image: amigoscode/2048@sha256:45a893ee62267d2825ffefb3b98e860de9716a5bb80091a84967d2bd427990db
+          imagePullPolicy: IfNotPresent
           name: "2048"
           ports:
             - containerPort: 80

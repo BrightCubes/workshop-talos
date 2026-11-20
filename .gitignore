@@ -1,4 +1,5 @@
 talosconfig
+kubeconfig
 controlplane.yaml
 worker.yaml
-patch-docker.yaml
+patch.yaml
