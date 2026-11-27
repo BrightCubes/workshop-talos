@@ -2,5 +2,4 @@ talosconfig
 kubeconfig
 controlplane.yaml
 worker.yaml
-patch.yaml
 .DS_Store
