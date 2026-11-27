@@ -185,7 +185,7 @@ Talos enforces the PodSecurity `baseline` policy by default, and this workload a
 
 ## 11. Patch the machine config
 
-Everything on a Talos node is changed through its machine config, never on the node itself. Exempt the `game-2048` namespace from PodSecurity with a `patch.yaml`:
+Everything on a Talos node is changed through its machine config, never on the node itself. The repo contains a ready-made [`patch.yaml`](patch.yaml) that exempts the `game-2048` namespace from PodSecurity:
 ```yaml
 cluster:
   apiServer:
@@ -216,7 +216,7 @@ Play the game at http://localhost:30080
 Remove the nodes, their volumes and the generated files:
 ```
 docker compose down -v
-rm -f talosconfig kubeconfig controlplane.yaml worker.yaml patch.yaml
+rm -f talosconfig kubeconfig controlplane.yaml worker.yaml
 ```
 Reset `.env` to `TALOS_VERSION=v1.13.12` to start over.
 

@@ -1,0 +1,9 @@
+# Exempt the game-2048 namespace from the PodSecurity admission policy (step 11)
+cluster:
+  apiServer:
+    admissionControl:
+      - name: PodSecurity
+        configuration:
+          exemptions:
+            namespaces:
+              - game-2048
